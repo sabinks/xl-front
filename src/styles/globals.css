@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* h1,
+h2,
+h3,
+h4,
+h5 {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serifPoppishadow;
+}
+
+p,
+a {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serifPoppishadow;
+} */
+
+#advertisement-card h1 {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: x-large;
+    font-weight: 700;
+    text-align: center;
+}
+
+#advertisement-card li {
+    /* list-style-type: disc; */
+    font-size: small;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serifPoppishadow;
+    list-style-image: url('../../public/assets/check-mark-small.png');
+}
+
+#advertisement-card p {
+    font-size: small;
+    font-weight: 300;
+}
+
+#modal-advertisement-card h1 {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: x-large;
+    font-weight: 700;
+    text-align: center;
+}
+
+#modal-advertisement-card li {
+    /* list-style-type: disc; */
+    font-size: small;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serifPoppishadow;
+    list-style-image: url('../../public/assets/check-mark-small.png');
+}
+
+#modal-advertisement-card p {
+    font-size: small;
+    font-weight: 300;
+}
