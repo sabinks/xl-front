@@ -10,10 +10,12 @@ import { APP_NAME } from "@/constants";
 import { montserrat } from "@/fonts";
 import Link from "next/link";
 import Head from "next/head";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 
 export default function ResetPassword() {
     const router = useRouter()
+    const [isPassword, setIsPassword] = React.useState(true);
     const { token } = router?.query
     const [errors, setErrors] = useState([])
     const [loading, setLoading] = useState(false)
@@ -87,19 +89,32 @@ export default function ResetPassword() {
                                     {
                                         errors && <ErrorMessage name="email" errors={errors} />
                                     }
+                                    <div className="relative w-full">
 
-                                    <Input
-                                        name="password"
-                                        type='password'
-                                        label='Password'
-                                        value={state.password}
-                                        onChange={(e: { target: { value: string } }) =>
-                                            setState({ ...state, password: e.target.value })
+                                        <Input
+                                            name="password"
+                                            label='Password'
+                                            type={isPassword ? "password" : "text"}
+                                            value={state.password}
+                                            onChange={(e: { target: { value: string } }) =>
+                                                setState({ ...state, password: e.target.value })
+                                            }
+                                        />
+                                        {isPassword ? (
+                                            <EyeIcon
+                                                className="w-5 mr-2 cursor-pointer absolute top-8 right-0 "
+                                                onClick={() => setIsPassword(!isPassword)}
+                                            />
+                                        ) : (
+                                            <EyeSlashIcon
+                                                className="w-5 mr-2 cursor-pointer absolute top-8 right-0 "
+                                                onClick={() => setIsPassword(!isPassword)}
+                                            />
+                                        )}
+                                        {
+                                            errors && <ErrorMessage name="password" errors={errors} />
                                         }
-                                    />
-                                    {
-                                        errors && <ErrorMessage name="password" errors={errors} />
-                                    }
+                                    </div>
                                     <div>
                                         <Button
                                             fullWidth
