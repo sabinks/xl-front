@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { APP_NAME } from "@/constants";
+import { firstWordCapital } from "@/utils";
 const inter = Inter({ subsets: ['latin'] })
 
 interface ContactType {
@@ -37,7 +38,7 @@ const Contact = () => {
         message: "",
     });
     const [loading, setLoading] = useState<boolean>(false);
-    const [errors, setErrors] = useState<any>();
+    const [errors, setErrors] = useState<any>([]);
 
     const handleChange = (e: any) => {
         const { name, value } = e.target;
@@ -73,11 +74,18 @@ const Contact = () => {
                 ...prev, message: message
             }))
         } catch (error: any) {
-            const { data } = error.response;
-            setErrors(data);
+            const { message, statusCode } = error.response.data;
+            setErrors(message);
             setLoading(false);
         }
     };
+    const getErrorMsg = (name: string) => {
+        let msg = errors.find((error: any) => error.property == name)?.message
+        if (msg) {
+            return firstWordCapital(msg)
+        }
+        return ''
+    }
     return (
         <>
             <Head>
@@ -97,7 +105,7 @@ const Contact = () => {
                                     placeholder="Name*"
                                     // label="Your Name"
                                     className=" w-96"
-                                    error={errors && errors?.name}
+                                    error={errors.length > 0 && getErrorMsg('name')}
                                 />
                                 <Input
                                     type="email"
@@ -107,7 +115,7 @@ const Contact = () => {
                                     placeholder="Email*"
                                     // label="Email"
                                     className="w-96"
-                                    error={errors && errors?.email}
+                                    error={errors.length > 0 && getErrorMsg('email')}
                                 />
                                 <Input
                                     type="text"
@@ -117,7 +125,7 @@ const Contact = () => {
                                     placeholder="Contact No.*"
                                     // label="Phone"
                                     className="w-96"
-                                    error={errors && errors?.phone}
+                                    error={errors.length > 0 && getErrorMsg('phone')}
                                 />
                                 <Input
                                     type="text"
@@ -127,7 +135,7 @@ const Contact = () => {
                                     placeholder="Subject*"
                                     // label="Subject"
                                     className="w-96"
-                                    error={errors && errors?.subject}
+                                    error={errors.length > 0 && getErrorMsg('subject')}
                                 />
 
                                 <Input
@@ -138,7 +146,7 @@ const Contact = () => {
                                     placeholder="Message*"
                                     // label="Subject"
                                     className="w-96"
-                                    error={errors && errors?.message}
+                                    error={errors.length > 0 && getErrorMsg('message')}
                                 />
                                 <Button
                                     label="Submit"

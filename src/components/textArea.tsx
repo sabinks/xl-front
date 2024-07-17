@@ -8,7 +8,7 @@ type InputProps = {
     textAreaClassName?: string;
     labelClassName?: string;
     required?: boolean;
-    error?: string | undefined;
+    error?: string[] | string | undefined | any;
     [key: string]: any;
     placeholder?: string;
 };

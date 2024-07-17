@@ -4,6 +4,7 @@ import { Button, Input } from '@/components';
 import TextArea from '@/components/textArea';
 import { APP_NAME } from '@/constants';
 import { montserrat, nunitoSans, playFair, poppins, ptSans } from '@/fonts';
+import { firstWordCapital } from '@/utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { format, setHours, setMinutes } from 'date-fns';
 import Head from 'next/head';
@@ -16,7 +17,7 @@ import { toast } from 'react-toastify';
 function BookAppointment() {
     const router = useRouter()
     const [dob, setDob] = useState<any>(null)
-    const [errors, setErrors] = useState<any>({})
+    const [errors, setErrors] = useState<any>([])
     const [excludeData, setExcludeData] = useState<any>([])
     const [excludeTime, setExcludeTime] = useState<any>([])
     const [state, setState] = useState({
@@ -80,13 +81,21 @@ function BookAppointment() {
             router.push('/');
         },
         onError: (error: any) => {
-            const { status } = error.response;
+            const { statusCode, message } = error.response.data;
+            console.log(error.response.data);
 
-            if (status == 422) {
-                setErrors(error.response.data)
+            if (statusCode == 422) {
+                setErrors(message)
             }
         }
     })
+    const getErrorMsg = (name: string) => {
+        let msg = errors.find((error: any) => error.property == name)?.message
+        if (msg) {
+            return firstWordCapital(msg)
+        }
+        return ''
+    }
     return (
         <>
             <Head>
@@ -102,9 +111,9 @@ function BookAppointment() {
                                     alt="Separate"
                                     src="/separator.webp" width={400} height={200} />
                             </div>
-                            <Input label='Name' name="name" type="text" onChange={(e: any) => handleInputChange(e)} placeholder='Enter Fullname' error={errors?.name} />
-                            <Input label='Email' name="email" type="text" onChange={(e: any) => handleInputChange(e)} placeholder='Enter E-mail Address' error={errors?.email} />
-                            <Input label='Phone' name="phone" type="text" onChange={(e: any) => handleInputChange(e)} placeholder='Enter Phone Number' error={errors?.phone} />
+                            <Input label='Name' name="name" type="text" onChange={(e: any) => handleInputChange(e)} placeholder='Enter Fullname' error={errors.length > 0 && getErrorMsg('name')} />
+                            <Input label='Email' name="email" type="text" onChange={(e: any) => handleInputChange(e)} placeholder='Enter E-mail Address' error={errors.length > 0 && getErrorMsg('email')} />
+                            <Input label='Phone' name="phone" type="text" onChange={(e: any) => handleInputChange(e)} placeholder='Enter Phone Number' error={errors.length > 0 && getErrorMsg('phone')} />
                             <div className="flex flex-col">
                                 <label htmlFor="" className='text-sm font-semibold text-gray-700'>Date of Birth</label>
                                 <DatePicker
@@ -125,7 +134,7 @@ function BookAppointment() {
                                     className="border rounded-md border-primary focus:outline-none focus:ring-primary1 text-sm placeholder-gray-400"
                                 />
                                 <div className="py-1">
-                                    {errors?.dob && <p className="text-red-500 text-xs ">{errors?.dob}
+                                    {errors.length > 0 && getErrorMsg('dob') && <p className="text-red-500 text-xs ">{errors.length > 0 && getErrorMsg('dob')}
                                     </p>}
                                 </div>
                             </div>
@@ -146,8 +155,8 @@ function BookAppointment() {
                                         />
                                         <div className="py-1">
                                             {
-                                                errors?.bookingDate &&
-                                                <p className="text-red-500 text-xs ">{errors?.bookingDate}</p>
+                                                errors.length > 0 && <p className="text-red-500 text-xs ">{errors.length > 0 && getErrorMsg('bookingDate')}
+                                                </p>
                                             }
                                         </div>
                                     </div>
@@ -172,15 +181,15 @@ function BookAppointment() {
                                         />
                                         <div className="py-1">
                                             {
-                                                errors?.bookingTime &&
-                                                <p className="text-red-500 text-xs ">{errors?.bookingTime}</p>
+                                                errors.length > 0 && <p className="text-red-500 text-xs ">{errors.length > 0 && getErrorMsg('bookingTime')}
+                                                </p>
                                             }
                                         </div>
                                     </div>
                                 </div>
 
                             </div>
-                            <TextArea rows={6} label='Description' name="description" type="textarea" onChange={(e: any) => handleInputChange(e)} placeholder='Enter Description' error={errors?.description} />
+                            <TextArea rows={6} label='Description' name="description" type="textarea" onChange={(e: any) => handleInputChange(e)} placeholder='Enter Description' error={errors.length > 0 && getErrorMsg('description')} />
                             <div className="grid place-items-center pt-4">
                                 <Button label={'Book Appointment'} onClick={(e: any) => {
                                     handleSubmit(e)
