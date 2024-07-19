@@ -19,7 +19,7 @@ function index() {
     const { clientId } = router.query
     const [query, setQuery] = useState<string>("");
     const [sorting, setSorting] = useState<SortingState>([{
-        id: 'created_at',
+        id: 'createdAt',
         desc: true
     }])
     const [profileEdit, setProfileEdit] = useState(true)
@@ -41,11 +41,11 @@ function index() {
     })
     const [client, setClient] = useState({
         id: 0,
-        name: '',
+        username: '',
         email: '',
         dob: '',
         phone: '',
-        is_active: false,
+        active: false,
         image: '',
         profile_image_path: ''
     })
@@ -59,8 +59,8 @@ function index() {
     }, [clientId])
     const { isFetching: loadingIsFetching, refetch: refetchProfile } = useQuery(['user-profile', state?.clientId], getQuery, {
         onSuccess: (data: any) => {
-            const { id, name, email, dob, phone, is_active, profile_image, profile_image_path } = data
-            setClient({ id, name, email, dob, phone, is_active, image: profile_image, profile_image_path })
+            const { id, username, email, dob, phone, active, profile_image, profile_image_path } = data
+            setClient({ id, username, email, dob, phone, active, image: profile_image, profile_image_path })
         },
         enabled: state?.clientId ? true : false
     })
@@ -68,7 +68,7 @@ function index() {
         ["clients", query, sorting[0].id, sorting[0].desc ? 'desc' : 'asc', page, 10, state?.clientId],
         getClientNotes, {
         onSuccess: (res: any) => {
-            setTableData(res.data.data);
+            setTableData(res.data);
         },
         enabled: isAuthenticated && state?.clientId ? true : false
     })
@@ -129,9 +129,9 @@ function index() {
             cell: (info) => <span className='sm:w-[210px] md:w-[360px] text-justify ql-editor line-clamp-5'>{info.getValue()}</span>,
             header: "Note",
         }),
-        columnHelper.accessor((row: any) => row.created_at, {
-            id: "created_at",
-            cell: (info) => <span>{info.getValue() ? format(new Date(info.row.original?.created_at), 'd/M/Y') : ''}</span>,
+        columnHelper.accessor((row: any) => row.createdAt, {
+            id: "createdAt",
+            cell: (info) => <span>{info.getValue() ? format(new Date(info.row.original?.createdAt), 'd/M/Y') : ''}</span>,
             header: "Created At",
         }),
         columnHelper.accessor((row: any) => row.id, {
@@ -231,14 +231,14 @@ function index() {
                                 <img src={client?.image ? client?.profile_image_path + client?.image : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'} width={150} height={150} />
                             </div>
                             <div className="p-2 mt-2 space-y-2 ">
-                                <div className="grid grid-cols-2"><span className="font-semibold">Name</span><p className='break-all'>{client?.name}</p></div>
+                                <div className="grid grid-cols-2"><span className="font-semibold">Name</span><p className='break-all'>{client?.username}</p></div>
                                 <div className="grid grid-cols-2"><span className="font-semibold">Date of Birth</span><span>{client?.dob ? format(new Date(client?.dob), 'd/M/Y') : ''}</span></div>
                                 <div className="grid grid-cols-2"><span className="font-semibold">Email</span><p className='break-all'>{client?.email}</p></div>
                                 <div className="grid grid-cols-2"><span className="font-semibold">Phone</span><p className='break-all'>{client?.phone}</p></div>
                                 <div className="grid grid-cols-2">
                                     <span className="font-semibold">Active</span>
                                     {
-                                        <CheckBox name="is_active" label="" checked={client?.is_active} onChange={(e: any) => handleUserStatusChange(e, clientId)} />
+                                        <CheckBox name="active" label="" checked={client?.active} onChange={(e: any) => handleUserStatusChange(e, clientId)} />
                                     }
                                 </div>
                             </div>
@@ -274,7 +274,7 @@ function index() {
                                             columns={columns}
                                             sorting={sorting}
                                             setSorting={setSorting}
-                                            pageCount={data?.data?.last_page}
+                                            pageCount={data?.meta?.lastPage}
                                             Page={page}
                                             handlePaginationActon={handlePaginationActon}
                                             isloading={isFetching}

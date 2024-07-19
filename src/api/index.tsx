@@ -206,32 +206,25 @@ export const postQuery = async (value: any) => {
     return response
 };
 export const addClient = async (data: any) => {
-    console.log(data);
 
     const { id } = data
-    const formData: any = new FormData()
-    if (data.profile_image) {
-        const keys = Object.keys(data?.profile_image);
-        keys.forEach((key) => {
-            formData.append(`profile_image`, data.profile_image[key])
-        });
-    }
+    // const formData: any = new FormData()
+    // if (data.profile_image) {
+    //     const keys = Object.keys(data?.profile_image);
+    //     keys.forEach((key) => {
+    //         formData.append(`profile_image`, data.profile_image[key])
+    //     });
+    // }
     let url = `/clients`
+    const { username, email, active, phone, dob } = data
     if (id) {
-        formData.append('_method', "PUT")
         url = `/clients/${id}`
+        const response = await apiClient.patch(url, { username, email, active, phone, dob }, {});
+        return response.data
+    } else {
+
     }
-    const array = ["name", "email", "is_active", 'phone', 'dob']
-    array.map(item => {
-        data?.[item] != undefined && formData.append(`${item}`, data[item])
-    })
 
-    // formData.append('data', JSON.stringify(data?.data))
-    const response = await apiClient.post(url, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-    });
-
-    return response.data
 };
 
 export const addClientNote = async (data: any) => {
@@ -240,17 +233,13 @@ export const addClientNote = async (data: any) => {
     const formData: any = new FormData()
     let url = `/clients/${clientId}/notes`
     if (noteId) {
-        formData.append('_method', "PUT")
         url = `/clients/${clientId}/notes/${noteId}`
+        const response = await apiClient.patch(url, { note, name });
+        return response.data
+    } else {
+        const response = await apiClient.post(url, { note, name });
+        return response.data
     }
-    formData.append('name', name)
-    formData.append('note', note)
-
-    const response = await apiClient.post(url, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-    });
-
-    return response.data
 };
 export const deleteClientNote = async ({ clientId, noteId }: any) => {
     await apiClient.delete(`/clients/${clientId}/notes/${noteId}`);

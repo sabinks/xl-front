@@ -30,12 +30,12 @@ export default function ClientForm({ state, setState, error, edit }: any) {
         <div className="space-y-2">
             <Input
                 label="Name"
-                name='name'
+                name='username'
                 type='text'
-                value={state?.name}
+                value={state?.username}
                 onChange={handleChange}
             />
-            <p className='text-red-400 text-sm'>{error?.name}</p>
+            <p className='text-red-400 text-sm'>{error?.username}</p>
             <Input
                 label="Email"
                 name='email'
@@ -104,11 +104,11 @@ export default function ClientForm({ state, setState, error, edit }: any) {
 
                     <CheckBox
                         label="Active"
-                        name="is_active"
+                        name="active"
                         onChange={handleChange}
-                        checked={state?.is_active}
+                        checked={state?.active}
                     />
-                    <p className='text-red-400 text-sm'>{error?.is_active}</p>
+                    <p className='text-red-400 text-sm'>{error?.active}</p>
                 </>
             }
 

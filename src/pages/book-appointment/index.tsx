@@ -51,6 +51,7 @@ function BookAppointment() {
             setState((prev: any) => ({
                 ...prev, [name]: value, bookingTime: ''
             }))
+            refetch()
         } else {
             setState((prev: any) => ({
                 ...prev, [name]: value

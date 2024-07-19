@@ -16,13 +16,14 @@ import Modal from "@/components/modal";
 
 const initialState = { is_active: false, data: { mobile: '' } };
 export default function Client() {
+    const { role, isAuthenticated } = useAuth()
     const [query, setQuery] = useState<string>("");
     const [sorting, setSorting] = useState<SortingState>([{
-        id: 'created_at',
+        id: 'createdAt',
         desc: true
     }])
     const [page, setPage] = useState<number>(1);
-    const [packageId, setPackageId] = useState<number>(0)
+    const [clientId, setClientId] = useState<number>(1)
     const columnHelper = createColumnHelper<any>();
     const [isVisible, setSidePanelShow] = React.useState(false);
     const [tableData, setTableData] = React.useState<any>([]);
@@ -30,33 +31,31 @@ export default function Client() {
     const [state, setState] = useState<any>(initialState)
     const [edit, setEdit] = useState(false)
     const [lastPage, setLastPage] = useState(1)
-    const { role, isAuthenticated } = useAuth()
 
-    const { isFetching, data, refetch } = useQuery(
-        ["clients", query, sorting[0].id, sorting[0].desc ? 'desc' : 'asc', page, 10],
+    const { isLoading, data, refetch, isFetching } = useQuery(
+        ["clients", query, sorting[0].id, sorting[0].desc ? 'desc' : 'asc', page, 2],
         getQueryData, {
         onSuccess: (res) => {
-            // setLastPage(res.data.last_page)
-            setTableData(res.data.data);
+            setTableData(res.data);
         },
-        enabled: isAuthenticated
+        enabled: isAuthenticated ? true : false
     })
 
-    useQuery(['clients', packageId], getQuery, {
+    useQuery(['clients', clientId], getQuery, {
         onSuccess: (res) => {
             const { data, image_path } = res
             setState({
                 ...data,
-                data: (data.data == "0" || data.data == "undefined" || data.data == "false" || data.data == null || data.data == "")
-                    ? { mobile: '' } : JSON.parse(data?.data),
-                profile_image: '',
-                image: data.profile_image,
-                image_path: `${image_path}${data.profile_image}`,
+                // data: (data.data == "0" || data.data == "undefined" || data.data == "false" || data.data == null || data.data == "")
+                //     ? { mobile: '' } : JSON.parse(data?.data),
+                // profile_image: '',
+                // image: data.profile_image,
+                // image_path: `${image_path}${data.profile_image}`,
 
             })
-            setPackageId(0)
+            setClientId(0)
         },
-        enabled: packageId ? true : false
+        enabled: clientId ? true : false
     })
     const { isLoading: creatingClient, mutate } = useMutation<any, Error>(addClient,
         {
@@ -96,7 +95,7 @@ export default function Client() {
 
     const handleClick = (id: number) => {
         setEdit(true)
-        setPackageId(id)
+        setClientId(id)
         setSidePanelShow(!isVisible)
     }
 
@@ -105,8 +104,8 @@ export default function Client() {
         mutateUserStatusChange({ id, status: checked })
     }
     let columns = [
-        columnHelper.accessor((row: any) => row.name, {
-            id: "name",
+        columnHelper.accessor((row: any) => row.username, {
+            id: "username",
             cell: (info) => info.getValue(),
             header: "Client Name",
         }),
@@ -132,14 +131,14 @@ export default function Client() {
         //     header: "Partner Created",
         // }),
         columnHelper.accessor((row: any) => row.is_active, {
-            id: "is_active",
+            id: "active",
             cell: (info: any) => <span>
-                <CheckBox name="is_active" label="" checked={info.getValue()} onChange={(e: any) => handleUserStatusChange(e, info?.row?.original?.id)} />
+                <CheckBox name="active" label="" checked={info.getValue()} onChange={(e: any) => handleUserStatusChange(e, info?.row?.original?.id)} />
             </span>,
-            header: "Status",
+            header: "Active",
         }),
-        columnHelper.accessor((row: any) => row.created_at, {
-            id: "created_at",
+        columnHelper.accessor((row: any) => row.createAt, {
+            id: "createdAst",
             cell: (info) => info.getValue(),
             header: "Created At",
         }),
@@ -219,7 +218,7 @@ export default function Client() {
                                     columns={columns}
                                     sorting={sorting}
                                     setSorting={setSorting}
-                                    pageCount={data?.data?.last_page}
+                                    pageCount={data?.meta.lastPage}
                                     Page={page}
                                     handlePaginationActon={handlePaginationActon}
                                     isloading={isFetching}
