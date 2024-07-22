@@ -79,6 +79,11 @@ export const deleteAppointment = async (data: any) => {
     await apiClient.delete(`/book-appointments/${id}`)
 };
 
+export const paymentForBookAppointment = async (data: any) => {
+    const { id } = data
+    await apiClient.post(`/book-appointments/send-payment/${id}`)
+};
+
 
 export const updateAppointment = async (data: any) => {
     const { id } = data

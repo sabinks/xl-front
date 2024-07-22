@@ -3,7 +3,7 @@ import { createColumnHelper, SortingState } from "@tanstack/react-table";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { EyeIcon, PaperClipIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { checkSubset } from "@/utils";
-import { appointmentStatusChange, deleteAppointment, getQueryData, showAppointment, updateAppointment } from "../../../api";
+import { appointmentStatusChange, deleteAppointment, getQueryData, paymentForBookAppointment, showAppointment, updateAppointment } from "../../../api";
 import { CheckBox, NewTable, PageTitle, SidePanel, Button } from "../../../components";
 import Search from "../../../components/search";
 import { useAuth } from "../../../../hooks/auth";
@@ -13,6 +13,7 @@ import { APP_NAME } from "@/constants";
 import Modal from "@/components/modal";
 import BookingAppointmentForm from "./bookingAppointmentForm";
 import { format } from "date-fns";
+import { FaDollarSign } from "react-icons/fa";
 
 const list = [
     { label: "Tentative", value: "Tentative" },
@@ -68,7 +69,7 @@ export default function Dashboard() {
             },
         }
     );
-    const { mutate: mutateDeleteAppointment } = useMutation(deleteAppointment, {
+    const { mutate: mutateClickSendPayment } = useMutation(paymentForBookAppointment, {
         onSuccess: () => refetch()
     })
 
@@ -77,6 +78,12 @@ export default function Dashboard() {
         setEdit(true)
         setEditModalVisible(true)
     }
+    const handleClickSendPayment = (id: number) => {
+        mutateClickSendPayment({ id })
+    }
+    const { mutate: mutateDeleteAppointment } = useMutation(deleteAppointment, {
+        onSuccess: () => refetch()
+    })
     const columns = [
         columnHelper.accessor((row: any) => row, {
             id: "name",
@@ -142,7 +149,13 @@ export default function Dashboard() {
 
                 return (
                     <div className='flex items-center space-x-2'>
-
+                        <Button
+                            label=''
+                            buttonType="success"
+                            icon={<FaDollarSign className="w-5" />}
+                            onClick={() => handleClickSendPayment(id)}
+                            tooltipMsg="Send Payment For Booking Appointment"
+                        />
                         <Button
                             label=''
                             buttonType="warning"

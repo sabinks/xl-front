@@ -14,6 +14,8 @@
         "@hookform/resolvers": "^3.3.4",
         "@next/font": "^13.4.6",
         "@plaiceholder/next": "^3.0.0",
+        "@stripe/react-stripe-js": "^2.7.3",
+        "@stripe/stripe-js": "^4.1.0",
         "@tanstack/react-query": "^4.29.15",
         "@tanstack/react-table": "^8.9.2",
         "@types/node": "20.3.1",
