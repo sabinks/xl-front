@@ -95,6 +95,16 @@ export const showAppointment = async (data: any) => {
     const res = await apiClient.get(`/book-appointments/${id}`)
     return res.data
 };
+export const fetchPaymentIntent = async ({ amt, cur, refId, cusId }: any) => {
+    const response = await apiClient.get(`/create-stripe-intent?amt=${amt}&cur=${cur}&refId=${refId}&custId=${cusId}`);
+    console.log(response);
+    return response.data;
+};
+
+export const cancePaymentIntent = async ({ id }: any) => {
+    const response = await apiClient.get(`/cancel-stripe-intent?payment_intent=${id}`);
+    return response.data;
+};
 
 export const getSingeQueryData = async (data: any) => {
     const [name, query, sortby, order, page, perPage, id] = data?.queryKey

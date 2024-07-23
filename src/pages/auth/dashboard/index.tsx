@@ -38,7 +38,7 @@ export default function Dashboard() {
     const [edit, setEdit] = useState(false)
 
     const { isLoading, data, refetch, isFetching } = useQuery(
-        ["book-appointments", query, sorting[0].id, sorting[0].desc ? 'desc' : 'asc', page, 5],
+        ["book-appointments", query, sorting[0].id, sorting[0].desc ? 'desc' : 'asc', page, 10],
         getQueryData, {
         onSuccess: (res) => {
             setTableData(res.data);
