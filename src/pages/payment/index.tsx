@@ -5,43 +5,57 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { fetchPaymentIntent } from "@/api";
 import PaymentForm from "./paymentForm";
-const stripePromise = loadStripe(process.env.STRIPE_SECRET_KEY);
+import Loading from "@/components/loading";
+import { STRIPE_KEY } from "@/constants";
+
+const stripePromise = loadStripe(`${STRIPE_KEY}`)
 
 export default function BookAppointmentPayment() {
     const router = useRouter();
-    useEffect(() => {
-        getPaymentIntent();
-    }, []);
-    const [state, setState] = useState<any>({})
     const { refId, cusId, amt, cur } = router?.query
-    const getPaymentIntent = async () => {
-        const paymentIntentRespose = await fetchPaymentIntent({
-            amt, cur, refId, cusId
-        });
-        setState((prev: any) => ({
-            ...prev,
-            clientSecret: paymentIntentRespose.client_secret,
-            paymentIntentId: paymentIntentRespose.id,
-            amt, cusId, refId, cur
-        }));
+    const [state, setState] = useState<any>({})
+    useEffect(() => {
+        if (refId) {
+            getPaymentIntent(refId, cusId, amt, cur);
+        }
+    }, [refId]);
+
+    const getPaymentIntent = async (refId: any, cusId: any, amt: any, cur: any) => {
+        try {
+            const paymentIntentRespose = await fetchPaymentIntent({
+                amt, cur, refId, cusId
+            });
+            setState((prev: any) => ({
+                ...prev,
+                clientSecret: paymentIntentRespose.client_secret,
+                paymentIntentId: paymentIntentRespose.id,
+                amt, cusId, refId, cur
+            }));
+        } catch (error: any) {
+            console.log(error.response);
+            router.push('/')
+        }
     };
     const {
         clientSecret,
-        paymentIntentId,
-        price,
-        mutateBookShortCourse,
     } = state;
+    if (!clientSecret) {
+        return <Loading />
+    }
+
     return (
         <div className='w-full h-screen border flex items-center'>
             <div className='mx-auto w-full max-w-sm'>
-                <Elements
-                    stripe={stripePromise}
-                    options={{ clientSecret: clientSecret as string }}
-                >
-                    <PaymentForm
-                        state={state}
-                    />
-                </Elements>
+                {
+                    <Elements
+                        stripe={stripePromise}
+                        options={{ clientSecret: clientSecret as string }}
+                    >
+                        <PaymentForm
+                            state={state}
+                        />
+                    </Elements>
+                }
             </div>
         </div>
     );

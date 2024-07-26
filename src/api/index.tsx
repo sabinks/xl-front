@@ -96,8 +96,11 @@ export const showAppointment = async (data: any) => {
     return res.data
 };
 export const fetchPaymentIntent = async ({ amt, cur, refId, cusId }: any) => {
-    const response = await apiClient.get(`/create-stripe-intent?amt=${amt}&cur=${cur}&refId=${refId}&custId=${cusId}`);
-    console.log(response);
+    const response = await apiClient.get(`/create-stripe-intent?amt=${amt}&cur=${cur}&refId=${refId}&cusId=${cusId}`);
+    return response.data;
+};
+export const paymentSuccess = async ({ refId, cusId, paymentId }: any) => {
+    const response = await apiClient.get(`/payment-success?paymentId=${paymentId}&refId=${refId}&cusId=${cusId}`);
     return response.data;
 };
 

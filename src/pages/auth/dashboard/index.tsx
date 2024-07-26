@@ -103,7 +103,7 @@ export default function Dashboard() {
         columnHelper.accessor((row: any) => row, {
             id: "dob",
             cell: ({ row }) => <span>
-                {format(new Date(row.original.dob), 'd/M/Y')}
+                {format(new Date(row.original.dob), 'yyyy-MM-dd')}
             </span>,
             header: "Date of Birth",
         }),
@@ -122,7 +122,7 @@ export default function Dashboard() {
                     <div className="">
                         {
                             <Select
-                                className="w-[150px] md:w-[200px]"
+                                className="w-[150px] md:w-[140px]"
                                 name={id}
                                 value={{ label: status, value: status }}
                                 options={list}
@@ -135,6 +135,30 @@ export default function Dashboard() {
                 )
             },
             header: "Status",
+            enableSorting: false
+        }),
+        columnHelper.accessor((row: any) => row.paymentStatus, {
+            id: "paymentStatus",
+            cell: (info) => {
+                const { id, paymentStatus } = info.row.original
+                return (
+                    <div className="">
+                        {
+                            <Select
+                                className="w-[150px] md:w-[210px]"
+                                name={id}
+                                value={{ label: paymentStatus, value: paymentStatus }}
+                                options={[]}
+                                isMulti={false}
+                                onChange={(value) => handlePaymentStatusChange(value, id)}
+                                placeholder="Select Status"
+                            />
+                        }
+                    </div>
+                )
+            },
+            header: "Payment Status",
+            enableSorting: false
         }),
         columnHelper.accessor((row: any) => row, {
             id: "createdAt",
@@ -145,13 +169,14 @@ export default function Dashboard() {
         columnHelper.accessor((row: any) => row.id, {
             id: "actions",
             cell: (info: any) => {
-                const { id, user, publish } = info?.row.original
+                const { id, user, publish, paymentId } = info?.row.original
 
                 return (
                     <div className='flex items-center space-x-2'>
                         <Button
                             label=''
                             buttonType="success"
+                            disable={paymentId}
                             icon={<FaDollarSign className="w-5" />}
                             onClick={() => handleClickSendPayment(id)}
                             tooltipMsg="Send Payment For Booking Appointment"
@@ -191,6 +216,13 @@ export default function Dashboard() {
         setShowBookAppointment(true)
     }
     const handleChange = (value: any, id: number) => {
+        const submitData: any = {
+            status: value.value,
+            id
+        }
+        update(submitData)
+    }
+    const handlePaymentStatusChange = (value: any, id: number) => {
         const submitData: any = {
             status: value.value,
             id
@@ -285,6 +317,14 @@ export default function Dashboard() {
                                             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
                                                 {bookAppointment?.description}
                                             </dd>
+                                        </div>
+                                        <div className="px-4 py-2 md:py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                            <dt className="text-sm font-medium leading-6 text-gray-900">Payment Id</dt>
+                                            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{bookAppointment?.paymentId}</dd>
+                                        </div>
+                                        <div className="px-4 py-2 md:py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                            <dt className="text-sm font-medium leading-6 text-gray-900">Payment Status</dt>
+                                            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{bookAppointment?.paymentStatus}</dd>
                                         </div>
                                         <div className="px-4 py-2 md:py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                             <dt className="text-sm font-medium leading-6 text-gray-900">Created At</dt>

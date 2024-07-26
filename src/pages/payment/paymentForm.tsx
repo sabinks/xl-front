@@ -6,12 +6,17 @@ import {
     useStripe,
 } from "@stripe/react-stripe-js";
 import { Button } from "@/components";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
+import { paymentSuccess } from "@/api";
 // import { bookShortCourse } from "api/home";
 // import { cancePaymentIntent } from "api/home";
 
 export default function PaymentForm({
     state,
 }: any) {
+    const { refId, cusId } = state
+    const router = useRouter()
     const stripe = useStripe();
     const elements = useElements();
 
@@ -33,12 +38,17 @@ export default function PaymentForm({
                 },
                 redirect: "if_required",
             })
-            .then((res: any) => {
+            .then(async (res: any) => {
                 if (res.error) {
                     setError(res.error.message as string);
                 } else {
-                    console.log("Payment done");
-
+                    if (res?.paymentIntent?.status == "succeeded") {
+                        let paymentId = res?.paymentIntent?.id
+                        toast.success("Payment Completed, Thank you for using our service.", { autoClose: 3000 })
+                        await paymentSuccess({ refId, cusId, paymentId })
+                        console.log("Payment done");
+                        router.push('/')
+                    }
                 }
             })
             .catch((err) => {
