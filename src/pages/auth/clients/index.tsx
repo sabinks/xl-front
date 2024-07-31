@@ -33,7 +33,7 @@ export default function Client() {
     const [lastPage, setLastPage] = useState(1)
 
     const { isLoading, data, refetch, isFetching } = useQuery(
-        ["clients", query, sorting[0].id, sorting[0].desc ? 'desc' : 'asc', page, 2],
+        ["clients", query, sorting[0].id, sorting[0].desc ? 'desc' : 'asc', page, 10],
         getQueryData, {
         onSuccess: (res) => {
             setTableData(res.data);
@@ -42,8 +42,7 @@ export default function Client() {
     })
 
     useQuery(['clients', clientId], getQuery, {
-        onSuccess: (res) => {
-            const { data, image_path } = res
+        onSuccess: (data: any) => {
             setState({
                 ...data,
                 // data: (data.data == "0" || data.data == "undefined" || data.data == "false" || data.data == null || data.data == "")
@@ -85,7 +84,7 @@ export default function Client() {
                 const { id, status } = variables
                 const newData = tableData.map((client: any) => {
                     if (client.id == id) {
-                        return { ...client, is_active: status }
+                        return { ...client, active: status }
                     } return client
                 })
                 setTableData(newData)
@@ -130,7 +129,7 @@ export default function Client() {
         //     cell: (info) => info?.getValue().length > 0 ? `${info?.getValue()[0]?.name} (${info?.getValue()[0]?.email})` : "Self Sign Up",
         //     header: "Partner Created",
         // }),
-        columnHelper.accessor((row: any) => row.is_active, {
+        columnHelper.accessor((row: any) => row.active, {
             id: "active",
             cell: (info: any) => <span>
                 <CheckBox name="active" label="" checked={info.getValue()} onChange={(e: any) => handleUserStatusChange(e, info?.row?.original?.id)} />

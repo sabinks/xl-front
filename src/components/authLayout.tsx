@@ -30,27 +30,27 @@ const navigation = [
         roles: ['superadmin'],
         permission: ''
     },
-    {
-        name: "Newsletter",
-        href: '/auth/newsletter',
-        icon: NewspaperIcon,
-        roles: ['superadmin'],
-        permission: ''
-    },
-    {
-        name: "Send Newsletter",
-        href: '/auth/send-newsletter',
-        icon: NewspaperIcon,
-        roles: ['superadmin'],
-        permission: ''
-    },
-    {
-        name: "Appointment Available",
-        href: '/auth/appointment-available',
-        icon: NewspaperIcon,
-        roles: ['superadmin'],
-        permission: ''
-    },
+    // {
+    //     name: "Newsletter",
+    //     href: '/auth/newsletter',
+    //     icon: NewspaperIcon,
+    //     roles: ['superadmin'],
+    //     permission: ''
+    // },
+    // {
+    //     name: "Send Newsletter",
+    //     href: '/auth/send-newsletter',
+    //     icon: NewspaperIcon,
+    //     roles: ['superadmin'],
+    //     permission: ''
+    // },
+    // {
+    //     name: "Appointment Available",
+    //     href: '/auth/appointment-available',
+    //     icon: NewspaperIcon,
+    //     roles: ['superadmin'],
+    //     permission: ''
+    // },
 ];
 
 
@@ -207,7 +207,7 @@ export default function AuthLayout({ props }: any) {
                                                         href={item.href}
                                                         className={
                                                             classNames(
-                                                                router?.asPath === item.href
+                                                                router?.asPath == item.href
                                                                     ? "bg-secondary text-white font-semibold"
                                                                     : "text-primary2 hover:text-white hover:secondary hover:font-semibold",
                                                                 "group text-white flex items-center px-1 py-1.5 text-base rounded-md"
@@ -272,6 +272,9 @@ export default function AuthLayout({ props }: any) {
                             <>
                                 <nav className='flex-1 px-1 pb-2 space-y-1'>
                                     {
+                                        router?.asPath
+                                    }
+                                    {
                                         navigation.map(
                                             (item: any) => (
                                                 checkSubset(item.roles, role) &&
@@ -281,7 +284,7 @@ export default function AuthLayout({ props }: any) {
                                                     href={item.href}
                                                     className={
                                                         classNames(
-                                                            router?.asPath === item.href
+                                                            router?.asPath == item.href
                                                                 ? "bg-secondary text-white"
                                                                 : "text-primary2 hover:text-white",
                                                             "group text-white flex items-center px-2 py-1.5 rounded-md hover:bg-secondary transition duration-300"

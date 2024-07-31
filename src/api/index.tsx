@@ -161,9 +161,9 @@ export const userActiveStatusChange = async (id: number, status: boolean) => {
 
 export const userStatusChange = async (data: any) => {
     const { id, status } = data
-    await apiClient.post(`/user-status-change/${id}`,
+    await apiClient.post(`/clients/${id}/active-status`,
         {
-            status,
+            active: status,
         });
 };
 
